@@ -1,0 +1,231 @@
+{% extends 'logisticsBase.html' %}
+{% load static %}
+{% block localbody %}
+    <!-- 查询框-->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">查询条件</h3>
+        </div>
+
+        <div class="panel-body">
+            <form id="formSearch" class="form-horizontal" role="form" id="serach_form">
+                <div class="form-group">
+
+                    <label class="control-label col-sm-1" for="txt_search_stunamelabel">申请单号</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="applyNum">
+
+                    </div>
+
+                    <label class="control-label col-sm-2" for="txt_search_stuclasslabel">申请单状态</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" id="evaluateState">
+                            <option value="0">新建</option>
+                            <option value="1">流转</option>
+                            <option value="2">完成</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-2" style="text-align:left;">
+                        <button type="button" style="margin-left:50px" id="btn_query" class="btn btn-primary">查询</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <!-- bstable的工具栏钮-->
+    <div id="toolbar" class="btn-group">
+        <a class="btn btn-primary" id="btn_add" href="/fm/addFmEvaluate/" data-toggle="modal">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新建
+        </a>
+        <a class="btn btn-primary" id="btn_download" href="#" data-toggle="modal" onclick="exportData()">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>导出
+        </a>
+    </div>
+
+    <!-- 货物信息表单-->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">结算单信息</h3>
+        </div>
+        <div class="panel-body">
+            <table id="tb_rows"></table>
+        </div>
+    </div>
+
+
+<script>
+    //主要包括这几个方法：
+    //1.页面加载时：加载boostrapt table，并将数据传给后台
+    //2.设置搜索框产生变化时对boostrapt table进行刷新
+    //3.设置boostrapt table中的自定义按钮：增删改查
+
+    //table加载
+    $(function () {
+        $("#tb_rows").bootstrapTable({
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: true,                     //是否启用排序
+            sortName: 'evaluateId',                     // 要排序的字段
+            sortOrder: "asc",                   //排序方式
+
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 5,                       //每页的记录行数（*）
+            pageList: [10, 20, 30, 50, 100],     //可供选择的每页的行数（*）
+            paginationPreText: "上一页",
+            paginationNextText: "下一页",
+            clickToSelect: true,
+
+            //search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            //strictSearch: true,
+
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 700,                        //行高，如果没有设置height属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "evaluateId",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                   //是否显示父子表
+
+            contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+            url: "/fm/findFmEvaluate/",          //请求后台的URL（*）
+            method: "GET",                      //请求方式（*）
+            //queryParams: "queryParams",         //传递参数（*）
+            queryParamsType:"",
+            queryParams: function (params) {
+                temp = {
+                    offset: params.offset,
+                    limit: params.limit,
+                    sort: params.sort,
+                    order: params.order,
+                    pageNumber: params.pageNumber,
+                    pageSize: params.pageSize,
+                    search: params.search,
+                    applyNum: $("#applyNum").val(),
+                    evaluateState: $("#evaluateState").val()
+                };
+                return temp;
+            },
+
+            showExport: true,
+            exportDataType: 'all',
+            exportTypes:[ 'csv', 'doc', 'excel', 'xlsx', 'pdf'],  //导出文件类型
+
+            //需要显示的字段
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'evaluateId',
+                title: '结算单主键'
+            },{
+                field: 'userId',
+                title: '用户id'
+            },{
+                field: 'applyNum',
+                title: '申请单号'
+            },{
+                field: 'applyDate',
+                title: '申请日期'
+            },{
+                field: 'evaluateType',
+                title: '结算类型'
+            }, {
+                field: 'action',
+                title: '操作',
+                formatter:"actionFormatter",
+            }
+            ]
+        })
+    });
+    //操作按钮
+    function actionFormatter(value, row, index) {
+        return [
+            '<a class="btn btn-info btn-sm" id="btnedit" href="/fm/viewFmEvaluate/?evaluateId=' + row.evaluateId + '" >查看</a>',
+             '<a class="btn btn-danger btn-sm" id="btndel" href="#" onclick="delRow('+row.evaluateId+')">删除</a>' ,
+        ].join('');
+    }
+    //搜索框改变时的方法
+    $("#applyNum").change(function () {
+        $("#tb_rows").bootstrapTable('refresh');
+    })
+    $("#evaluateState").change(function () {
+        $("#tb_rows").bootstrapTable('refresh');
+    })
+    $("#btn_query").click(function () {
+        $("#tb_rows").bootstrapTable('refresh');
+    })
+
+//点击删除按钮触发的提示确认框
+    function delRow(evaluateId) {
+        BootstrapDialog.show({
+            title: '删除信息提示',
+            message: '确实删除?',
+            buttons: [{
+                label: '确定',
+                action: function (dialogItself) {
+                    dialogItself.close();
+                    data = {evaluateId : evaluateId}
+                    $.ajax({
+                        url: "/fm/delFmEvaluate/",
+                        type: "GET",
+                        data: data,
+                        success: function (data) {
+                            BootstrapDialog.show({
+                                title: '信息提示',
+                                message: '数据删除成功!',
+                                buttons: [{
+                                    label: '关闭',
+                                    action: function (dialogItself) {
+                                        dialogItself.close();
+                                    }
+                                }]
+                            });
+                            $('#tb_rows').bootstrapTable('refresh');
+                        }
+                    })
+                }
+            }, {
+                label: '取消',
+                action: function (dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        });
+    }
+//导出按钮点击事件
+    function exportData() {
+        BootstrapDialog.show({
+            title: '下载提示',
+            message: '是否下载发运商信息表?',
+            buttons: [{
+                label: '确定',
+                action: function (dialogItself) {
+                    dialogItself.close();
+                    $('#tb_spmcMessage').tableExport({
+                        type: 'excel',
+                        exportDataType: "all",
+                        ignoreColumn: [0],//忽略某一列的索引
+                        fileName: '发运商信息表',//下载文件名称
+                        onCellHtmlData: function (cell, row, col, data) {//处理导出内容,自定义某一行、某一列、某个单元格的内容
+                            console.info(data);
+                            return data;
+                        },
+                    });
+                }
+            }, {
+                label: '取消',
+                action: function (dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        });
+    }
+</script>
+
+{% endblock %}

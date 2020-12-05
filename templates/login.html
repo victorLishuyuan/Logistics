@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% block login_registe %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>用户登录</title>
+    </head>
+    <body>
+    <!--自定义js、css-->
+    <script type="text/javascript">
+        function registe() {
+            location.href = 'sm/registe'
+        }
+    </script>
+    <style type="text/css">
+        .login-body {
+            height: 362px;
+            width: 100%;
+            margin: auto;
+            background-image: url("/static/img/window/login_body.png");
+        }
+        .login-top {
+            height: 100px;
+            width: 100%;
+            background-image: url("/static/img/window/login_top.png");
+        }
+        .login-foot {
+            height: 200px;
+            width: 100%;
+            background-image: url("/static/img/window/login_foot.png");
+        }
+        .input-user{
+            margin-left: 742px;
+            margin-top: 143px;
+        }
+        .input-pwd{
+            margin-left: 742px;
+            margin-top: 12px;
+
+        }
+        .input-code{
+            margin-left: 742px;
+            margin-top: 12px;
+        }
+        .lable-text-color{
+            color: #FFFFFF;
+            font-family: 宋体;
+        }
+        .input-button{
+            margin-left: 805px;
+            margin-top: 12px;
+        }
+        .foot-text{
+            font-family: 宋体;
+            font-size: 12px;
+        }
+        .foot-table{
+            margin: 60px auto;
+            text-align: center;
+        }
+    </style>
+    <!--自定义js、css end-->
+    <!-- 登录的模态框（Modal） -->
+{#    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">#}
+{#        <div class="modal-dialog">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h3 class="modal-title" id="myModalLabel">欢迎登录</h3>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                    <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data"#}
+{#                          action="#">#}
+{#                        {% csrf_token %}#}
+{#                        <div class="form-group">#}
+{#                            <label class="col-lg-3 col-md-4 col-sm-12 control-label">用户名:</label>#}
+{#                            <div class="col-lg-8 col-md-4 col-sm-12">#}
+{#                                <input id="username" name="username" type="text"#}
+{#                                       class="form-control required"#}
+{#                                       placeholder="用户名/手机号" autofocus="autofocus">#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label class="col-lg-3 col-md-4 col-sm-12 control-label">密码:</label>#}
+{#                            <div class="col-lg-8 col-md-4 col-sm-12">#}
+{#                                <input id="password" name="password" type="password"#}
+{#                                       class="form-control" placeholder="密码" autofocus="autofocus">#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group">#}
+{#                            <label class="col-lg-3 col-md-4 col-sm-12 control-label">验证码:</label>#}
+{#                            <div class="col-lg-3 col-md-3 col-sm-6">#}
+{#                                <input id="verify_code" name="verify_code" type="text"#}
+{#                                       class="form-control" placeholder="验证码" autofocus="autofocus">#}
+{#                            </div>#}
+{#                            <div class="col-lg-2 col-md-2 col-sm-6"><img src="/sm/verify_code"></div>#}
+{#                        </div>#}
+{#                        <div class="modal-footer">#}
+{#                            <button type="button" class="btn btn-primary" onclick="login()">确定</button>#}
+{#                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div><!-- /.modal-content -->#}
+{#        </div><!-- /.modal -->#}
+{#    </div>#}
+    <div class="panel">
+        <div class="panel-body login-top"></div>
+        <div class="panel-body login-body">
+            <!--
+            <div class="row">
+                <div class="col-md-11"></div>
+                <div class="col-md-1" align="left">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModal">登录
+                        </button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" onclick="registe()">注册
+                        </button>
+                    </div>
+                </div>
+            </div>
+            -->
+            <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data"
+                  action="#">
+                {% csrf_token %}
+            <div class="input-user">
+                <b class="lable-text-color">用户名：</b><input id="username" name="username" type="text" placeholder="用户名/手机号" autofocus="autofocus">
+            </div>
+            <div class="input-pwd">
+                <b class="lable-text-color">密&nbsp;码：</b><input id="password" name="password" type="password" placeholder="密码">
+            </div>
+            <div class="input-code">
+                <b class="lable-text-color">验证码：</b><input id="verify_code" style="width:13%;" name="verify_code" type="text" placeholder="验证码">
+                &nbsp;<img src="/sm/verify_code">
+            </div>
+            <div class="input-button">
+                <button type="button" class="btn btn-success btn-sm" onclick="login()">确定</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" onclick="registe()">注册
+                        </button>
+            </div>
+            </form>
+        </div>
+        <div class="panel-body login-foot">
+            <table class="foot-table foot-text">
+                <tr>
+                    <td>Copyright <h style="font-family: 'Times New Roman'; font-size: 15px;">©</h> 2020 4000365586.COM All Rights Reserved 版权所有：天津聚鹰供应链管理有限公司</td>
+                </tr>
+                <tr>
+                    <td>ICP备案许可证号：津ICP备20001117号 增值电脑业务经营许可证：津B2-20200130 技术服务电话：400-036-5566</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        //增加点击回车事件
+        $(document).keypress(function(e) {
+            var eCode = e.keyCode ? e.keyCode : e.which ? e.which : e.charCode;
+            if (eCode == 13){
+                login();
+            }
+        });
+
+        function login() {
+            var username = $("#username").val()
+            var password = $("#password").val()
+            $.ajax({
+                url: '/sm/login/',
+                async: false,//同步方式发送请求，true为异步发送
+                type: "POST",
+                headers: {"X-CSRFToken": $.cookie('csrftoken')},
+                data: {
+                    'username': username,      //将角色的id传到后台
+                    'password': password        //密码
+                },
+                success: function (result) {
+                    result_info = JSON.parse(result);
+                    ret_code = result_info.ret_code
+                    ret_info = result_info.ret_info
+                    if (ret_code == '1') {
+                        BootstrapDialog.show({
+                            title: '信息提示',
+                            message: ret_info,
+                            buttons: [
+                                {
+                                    label: '确定',
+                                    action: function (dialogItself) {
+                                        dialogItself.close();
+                                    }
+                                }]
+                        });
+                         $(location).attr('href', '/sm/index');
+                    } else {
+                        BootstrapDialog.show({
+                            title: '信息提示',
+                            message: ret_info,
+                            buttons: [{
+                                label: '确定',
+                                action: function (dialogItself) {
+                                    $(location).attr('href', '/sm/login');
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+                    }
+                }
+            });
+        }
+        if(window !=top){
+             top.location.href = 'sm/login/';
+         }
+    </script>
+    </body>
+    </html>
+{% endblock %}

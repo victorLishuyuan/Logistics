@@ -1,0 +1,38 @@
+{% extends 'logisticsBase.html' %}
+{% load static %}
+{% block localbody %}
+
+    <div class="col-md-12" style="width: 80%">
+        <h1 class="page-header" style="font-size: 14px ; text-align: center">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3>结算表信息</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table" border="3px">
+                        <tbody>
+                        <tr>
+                            <td>结算申请单编号:</td>
+                            <td>{{data.evaluateId}}</td>
+                            <td>申请单号:</td>
+                            <td>{{data.applyNum}}</td>
+                            <td>申请日期:</td>
+                            <td>{{data.applyDate}}</td>
+                        </tr>
+                        <tr>
+                            <td>结算类型:</td>
+                            <td>{{data.evaluateType}}</td>
+                            <td>本次实结算金额(元):</td>
+                            <td>{{data.actualEvaluateAmount}}</td>
+                            <td>贷款金额(元):</td>
+                            <td>{{data.paymentAmount}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a class="btn btn-primary" href="/fm/editFmEvaluate/?evaluateId={{data.evaluateId}}">编辑</a>
+                    <a class="btn btn-danger" href="{% url 'fm:fmEvaluateEntry' %}">返回</a>
+                </div>
+            </div>
+        </h1>
+    </div>
+{% endblock %}

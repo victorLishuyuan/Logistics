@@ -1,0 +1,217 @@
+{% extends 'logisticsBase.html' %}
+{% load static %}
+{% block localbody %}
+    <div class="col-md-12" style="width: 80%">
+        <h1 class="page-header" style="font-size: 14px ; text-align: center">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3>新建结算申请单</h3>
+                </div>
+                <div class="panel-body">
+                    <hr>
+                    <form id="my_form" action="/fm/addFmEvaluate/" method="post" enctype="multipart/form-data"
+                          class="form-horizontal group-border hover-stripped">
+                        {% csrf_token %}   <!--加入这行 -->
+
+                        <!--申请单号主键一般不会显示在界面上，但是有时候会用到改编号所以可以隐藏 -->
+                        <label hidden class="col-lg-2 col-md-2 col-sm-12 control-label">结算申请单主键:<font
+                                color="red">*</font></label>
+                        <div hidden class="col-lg-3 col-md-5">
+                            <input value="{{ data.evaluateId }}" name="evaluateId" type="text"
+                                   class="form-control" readonly>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">结算申请单号:<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-5">
+                                <input value="{{ data.applyNum }}" name="applyNum" type="text"
+                                       class="form-control" readonly>
+                            </div>
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">申请日期:<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-5">
+                                <input value="{{ data.applyDate }}" name="applyDate" type="text"
+                                       class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">结算类型:<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-5">
+                                <select name="evaluateType" class="form-control">
+                                    <option value="1" {% if data.evaluateType == 1 %}
+                                            selected {% endif %}>货款
+                                    </option>
+                                    <option value="2" {% if data.evaluateType == 2 %}
+                                            selected {% endif %} >运费
+                                    </option>
+                                </select>
+                            </div>
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">本次实结算金额(元):<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <input value="{{ data.actualEvaluateAmount }}" name="actualEvaluateAmount" type="text"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">贷款金额(元):<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <input value="{{ data.paymentAmount }}" name="paymentAmount" type="text"
+                                       class="form-control">
+                            </div>
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">运费金额(元):<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <input value="{{ data.freightAmount }}" name="freightAmount" type="text"
+                                       class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">罚款金额(元):<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <input value="{{ data.fineAmount }}" name="fineAmount" type="text"
+                                       class="form-control">
+                            </div>
+
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">违约金(元):<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <input value="{{ data.liquidatedDamagesAmount }}" name="liquidatedDamagesAmount"
+                                       type="text"
+                                       class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">说明:<font
+                                    color="red">*</font></label>
+                            <div class="col-lg-3 col-md-2">
+                                <textarea value="{{ data.evaluateExplain }}" name="evaluateExplain"
+                                          class="form-control">
+
+                                </textarea>
+                            </div>
+                        </div>
+                        <!--隐藏域-->
+                        <input hidden value="{{ data.evaluatePeopleId }}" name="evaluatePeopleId">
+                        <input hidden value="{{ data.evaluatePeople }}" name="evaluatePeople">
+                        <input hidden value="{{ data.evaluateFinishTime }}" name="evaluateFinishTime">
+                        <input hidden value="{{ data.evaluateState }}" name="evaluateState">
+
+                        <input hidden value="{{ data.companyId }}" name="companyId">
+                        <input hidden value="{{ data.deptId }}" name="deptId">
+                        <input hidden value="{{ data.createUserId }}" name="createUserId">
+                        <input hidden value="{{ data.createTime }}" name="createTime">
+                         <input hidden value="{{ data.updateUserId }}" name="updateUserId">
+                        <input hidden value="{{ data.updateTime }}" name="updateTime">
+                        <input hidden value="{{ data.delFlag }}" name="delFlag">
+
+
+
+                        <button type="button" class="btn btn-primary" onclick="btnSave()">保存</button>
+                        <a class="btn btn-danger" href="{% url 'fm:fmEvaluateEntry' %}">返回</a>
+                    </form>
+                </div>
+            </div>
+        </h1>
+    </div>
+    <!--保存js方法-->
+    <script type="text/javascript">
+        function btnSave() {
+            BootstrapDialog.show({
+                title: '信息提示',
+                message: '确定新建?',
+                buttons: [{
+                    label: '确定',
+                    action: function (dialogItself) {
+                        dialogItself.close();
+                        BootstrapDialog.show({
+                            title: '信息提示',
+                            message: '新建成功！',
+                            buttons: [{
+                                label: '关闭',
+                                action: function (dialogItself) {
+                                    document.getElementById("my_form").submit();
+                                    dialogItself.close();
+                                }
+                            }]
+                        });
+                    }
+                }, {
+                    label: '取消',
+                    action: function (dialogItself) {
+                        dialogItself.close();
+                    }
+                }]
+            });
+        }
+
+        $(function () {
+            $("#my_form").bootstrapValidator({
+                live: 'enabled',//验证时机，enabled是内容有变化就验证（默认），disabled和submitted是提交再验证
+                submitButtons: 'button[type="submit"]',
+                excluded: [':disabled', ':hidden', ':not(:visible)'],//排除无需验证的控件，比如被禁用的或者被隐藏的
+                {#submitButtons: '#btn-test',//指定提交按钮，如果验证失败则变成disabled，但我没试成功，反而加了这句话非submit按钮也会提交到action指定页面#}
+                message: '通用的验证失败消息',//好像从来没出现过
+                feedbackIcons: {//根据验证结果显示的各种图标
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    actualEvaluateAmount: {
+                        validators: {
+                            notEmpty: {
+                                message: '金额不能为空'
+                            },
+                            regexp: {//正则验证
+                                regexp: /^\d+(\.\d{1,2})?$/,
+                                message: '金额为数字'
+                            },
+                        }
+                    },
+                    paymentAmount: {
+                        validators: {
+                            notEmpty: {
+                                message: '金额不能为空'
+                            },
+                            regexp: {//正则验证
+                                regexp: /^\d+(\.\d{1,2})?$/,
+                                message: '金额为数字'
+                            },
+                        }
+                    }, freightAmount: {
+                        validators: {
+                            notEmpty: {
+                                message: '金额不能为空'
+                            },
+                            regexp: {//正则验证
+                                regexp: /^\d+(\.\d{1,2})?$/,
+                                message: '金额为数字'
+                            },
+                        }
+                    }, fineAmount: {
+                        validators: {
+                            notEmpty: {
+                                message: '金额不能为空'
+                            },
+                            regexp: {//正则验证
+                                regexp: /^\d+(\.\d{1,2})?$/,
+                                message: '金额为数字'
+                            },
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
